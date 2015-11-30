@@ -19,7 +19,7 @@ public class Cell<T extends PDPage> {
 
 	private PDFont font = PDType1Font.HELVETICA;
 	private PDFont fontBold = PDType1Font.HELVETICA_BOLD;
-
+	
 	private float fontSize = 8;
 	private Color fillColor;
 	private Color textColor = Color.BLACK;
@@ -43,11 +43,12 @@ public class Cell<T extends PDPage> {
 	float verticalFreeSpace = 0;
 
 	/**
-	 *
-	 * @param width in % of table width
+	 * 
+	 * @param width
+	 *            in % of table width
 	 * @param text
 	 */
-	Cell(Row<T> row, float width, String text, boolean isCalculated, HorizontalAlignment align, VerticalAlignment valign) {
+	Cell(Row<T> row, float width, String text, boolean isCalculated, HorizontalAlignment align, VerticalAlignment valign, Function<String, String[]> wrappingFunc) {
 		this.row = row;
 		if (isCalculated) {
 			double calclulatedWidth = ((row.getWidth() * width) / 100);
@@ -58,12 +59,22 @@ public class Cell<T extends PDPage> {
 
 		if (getWidth() > row.getWidth()) {
 			throw new IllegalArgumentException(
-				"Cell Width=" + getWidth() + " can't be bigger than row width=" + row.getWidth());
+					"Cell Width=" + getWidth() + " can't be bigger than row width=" + row.getWidth());
 		}
 		this.text = text == null ? "" : text;
 		this.align = align;
 		this.valign = valign;
-		this.wrappingFunction = null;
+		this.wrappingFunction = wrappingFunc;
+	}
+
+	/**
+	 * 
+	 * @param width
+	 *            in % of table width
+	 * @param text
+	 */
+	Cell(Row<T> row, float width, String text, boolean isCalculated, HorizontalAlignment align, VerticalAlignment valign) {
+		this(row, width, text, isCalculated, align, valign, null);
 	}
 
 	public Color getTextColor() {
@@ -189,7 +200,7 @@ public class Cell<T extends PDPage> {
 	public PDFont getFontBold() {
 		return fontBold;
 	}
-
+	
 	public void setFontBold(PDFont fontBold) {
 		this.fontBold = fontBold;
 	}
